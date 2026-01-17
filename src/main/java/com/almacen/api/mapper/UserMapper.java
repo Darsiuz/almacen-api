@@ -6,12 +6,13 @@ import com.almacen.api.model.User;
 public class UserMapper {
 
     public static UserDTO toDTO(User user) {
-        return new UserDTO(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRole().getName(),
-                user.isActive()
-        );
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        dto.setRole(user.getRole().getName());
+        dto.setActive(user.isActive());
+        return dto;
     }
+
 }

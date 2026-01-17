@@ -55,7 +55,7 @@ public class DataInitializer {
                 Role auditorRole = roleRepository.findByName("AUDITOR").orElseThrow();
 
                 User admin = new User();
-                admin.setName("Admin Principal");
+                admin.setName("Administrador");
                 admin.setEmail("admin@almacen.com");
                 admin.setPassword(passwordEncoder.encode("admin123"));
                 admin.setRole(adminRole);
@@ -63,7 +63,7 @@ public class DataInitializer {
                 userRepository.save(admin);
 
                 User manager = new User();
-                manager.setName("Manager López");
+                manager.setName("Manager");
                 manager.setEmail("manager@almacen.com");
                 manager.setPassword(passwordEncoder.encode("manager123"));
                 manager.setRole(managerRole);
@@ -71,7 +71,7 @@ public class DataInitializer {
                 userRepository.save(manager);
 
                 User operator = new User();
-                operator.setName("Operador García");
+                operator.setName("Operador");
                 operator.setEmail("operator@almacen.com");
                 operator.setPassword(passwordEncoder.encode("operator123"));
                 operator.setRole(operatorRole);
@@ -79,7 +79,7 @@ public class DataInitializer {
                 userRepository.save(operator);
 
                 User auditor = new User();
-                auditor.setName("Auditor Martínez");
+                auditor.setName("Auditor");
                 auditor.setEmail("auditor@almacen.com");
                 auditor.setPassword(passwordEncoder.encode("auditor123"));
                 auditor.setRole(auditorRole);
