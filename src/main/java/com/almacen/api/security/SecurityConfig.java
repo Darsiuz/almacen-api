@@ -47,6 +47,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/product/**")
                         .hasRole("ADMIN")
 
+                        // MOVIMIENTOS
+                        .requestMatchers(HttpMethod.POST, "/movement/**")
+                        .hasAnyRole("ADMIN", "OPERATOR")
+
+                        .requestMatchers(HttpMethod.GET, "/movement/**")
+                        .hasAnyRole("ADMIN", "MANAGER", "AUDITOR")
+
+                        .requestMatchers(HttpMethod.PUT, "/movement/**")
+                        .hasAnyRole("ADMIN", "MANAGER")
+
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers("/operator/**").hasAnyRole("ADMIN", "OPERATOR")

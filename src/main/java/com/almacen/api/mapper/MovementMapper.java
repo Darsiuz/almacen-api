@@ -6,11 +6,14 @@ import com.almacen.api.model.Movement;
 public class MovementMapper {
 
     public static MovementDTO toDTO(Movement movement) {
+
         return new MovementDTO(
                 movement.getId(),
+                movement.getProduct().getId(),
                 movement.getProduct().getName(),
                 movement.getType(),
                 movement.getQuantity(),
+                movement.getReason(),
                 movement.getStatus(),
                 movement.getUser().getName(),
                 movement.getDate()

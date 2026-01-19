@@ -8,4 +8,6 @@ import java.util.List;
 public interface MovementRepository extends JpaRepository<Movement, Long> {
 
     List<Movement> findByStatus(String status);
+    List<Movement> findByType(String type);
+    List<Movement> findByProductId(Long productId);
 }
