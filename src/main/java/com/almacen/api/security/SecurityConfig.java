@@ -29,12 +29,39 @@ public class SecurityConfig {
 
         http
                 .csrf(csrf -> csrf.disable())
+
+                // MANEJO DE ERRORES DE SEGURIDAD
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(401);
+                            response.setContentType("application/json");
+                            response.getWriter().write("""
+                                        {
+                                          "status": 401,
+                                          "error": "Unauthorized",
+                                          "message": "NOSE QUIEN ERES"
+                                        }
+                                    """);
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setStatus(403);
+                            response.setContentType("application/json");
+                            response.getWriter().write("""
+                                        {
+                                          "status": 403,
+                                          "error": "Forbidden",
+                                          "message": "No tiene permisos para ENTRAR"
+                                        }
+                                    """);
+                        }))
+
+                // AUTORIZACION
                 .authorizeHttpRequests(auth -> auth
 
                         // Publico
                         .requestMatchers("/auth/**").permitAll()
 
-                        // PRODUCTOS (endpoint unico)
+                        // PRODUCTOS
                         .requestMatchers(HttpMethod.GET, "/product", "/product/**")
                         .hasAnyRole("ADMIN", "MANAGER", "OPERATOR", "AUDITOR")
 
@@ -71,13 +98,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/report/**")
                         .hasAnyRole("ADMIN", "MANAGER", "AUDITOR")
 
-                        // ROLES TEST
+                        // TEST ROLES
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers("/operator/**").hasAnyRole("ADMIN", "OPERATOR")
                         .requestMatchers("/auditor/**").hasAnyRole("ADMIN", "AUDITOR")
-                        // Cualquier otro endpoint
+
                         .anyRequest().authenticated())
+
+                // BASIC AUTH
                 .httpBasic(httpBasic -> {
                 });
 
