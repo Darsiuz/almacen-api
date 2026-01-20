@@ -57,6 +57,17 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/movement/**")
                         .hasAnyRole("ADMIN", "MANAGER")
 
+                        // INCIDENCIAS
+                        .requestMatchers(HttpMethod.POST, "/incident/**")
+                        .hasAnyRole("ADMIN", "OPERATOR")
+
+                        .requestMatchers(HttpMethod.GET, "/incident/**")
+                        .hasAnyRole("ADMIN", "MANAGER", "AUDITOR")
+
+                        .requestMatchers(HttpMethod.PUT, "/incident/**")
+                        .hasAnyRole("ADMIN", "MANAGER")
+
+                        // ROLES TEST
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers("/operator/**").hasAnyRole("ADMIN", "OPERATOR")

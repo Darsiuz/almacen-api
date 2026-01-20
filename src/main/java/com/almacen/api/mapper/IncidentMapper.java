@@ -8,6 +8,7 @@ public class IncidentMapper {
     public static IncidentDTO toDTO(Incident incident) {
         return new IncidentDTO(
                 incident.getId(),
+                incident.getProduct().getId(),
                 incident.getProduct().getName(),
                 incident.getType(),
                 incident.getQuantity(),
