@@ -29,17 +29,17 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User createUser(String name, String email, String password, String roleName) {
+    public User createUser(UserDTO dto) {
 
-        Role role = roleRepository.findByName(roleName)
+        Role role = roleRepository.findByName(dto.getRole())
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
         User user = new User();
-        user.setName(name);
-        user.setEmail(email);
-        user.setPassword(passwordEncoder.encode(password));
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setRole(role);
-        user.setActive(true);
+        user.setActive(dto.getActive() != null ? dto.getActive() : true);
 
         return userRepository.save(user);
     }

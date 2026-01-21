@@ -1,6 +1,7 @@
 package com.almacen.api.controller;
 
 import com.almacen.api.dto.UserDTO;
+import com.almacen.api.mapper.UserMapper;
 import com.almacen.api.model.User;
 import com.almacen.api.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -33,22 +34,18 @@ public class UserController {
 
     // POST - Crear usuario
     @PostMapping
-    public ResponseEntity<User> createUser(
-            @RequestParam String name,
-            @RequestParam String email,
-            @RequestParam String password,
-            @RequestParam String role
-    ) {
-        User user = userService.createUser(name, email, password, role);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO dto) {
+
+        User createdUser = userService.createUser(dto);
+        UserDTO createdUserDTO = UserMapper.toDTO(createdUser);
+        return new ResponseEntity<>(createdUserDTO, HttpStatus.CREATED);
     }
 
     // PUT - Actualizar usuario
     @PutMapping("/{id}")
     public User updateUser(
             @PathVariable long id,
-            @RequestBody UserDTO userDTO
-    ) {
+            @RequestBody UserDTO userDTO) {
         return userService.updateUser(id, userDTO);
     }
 
