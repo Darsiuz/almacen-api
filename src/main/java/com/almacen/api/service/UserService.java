@@ -58,6 +58,9 @@ public class UserService {
         Role role = roleRepository.findByName(dto.getRole())
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
         user.setRole(role);
+        if (dto.getActive() != null) {
+            user.setActive(dto.getActive());
+        }
 
         return userRepository.save(user);
     }

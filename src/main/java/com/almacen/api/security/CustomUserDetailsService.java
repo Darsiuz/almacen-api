@@ -2,6 +2,8 @@ package com.almacen.api.security;
 
 import com.almacen.api.model.User;
 import com.almacen.api.repository.UserRepository;
+
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +23,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("Usuario no encontrado"));
+
+        if ( !user.isActive() ) {
+            throw new DisabledException("Usuario inactivo");
+        }
 
         return new CustomUserDetails(user);
     }
