@@ -2,12 +2,17 @@ package com.almacen.api.controller;
 
 import com.almacen.api.model.Product;
 import com.almacen.api.service.ProductService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@Tag(name = "Gestor de Productos", description = "Endpoints para la gestion de productos")
 @RequestMapping("/product")
 public class ProductController {
 
@@ -19,18 +24,21 @@ public class ProductController {
 
     // GET - Listar productos
     @GetMapping
+    @Operation(summary = "Listar todos los productos", description = "Obtiene una lista de todos los productos disponibles en el almacen")
     public List<Product> getAll() {
         return productService.findAll();
     }
 
     // GET - Producto por ID
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener producto por ID", description = "Obtiene los detalles de un producto especifico mediante su ID")
     public Product getById(@PathVariable long id) {
         return productService.findById(id);
     }
 
     // POST - Crear producto
     @PostMapping
+    @Operation(summary = "Crear un nuevo producto", description = "Crea un nuevo producto en el almacen con los datos proporcionados")
     @ResponseStatus(HttpStatus.CREATED)
     public Product create(@RequestBody Product product) {
         return productService.create(product);
@@ -38,6 +46,7 @@ public class ProductController {
 
     // PUT - Actualizar producto
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar un producto existente", description = "Actualiza los datos de un producto existente mediante su ID")
     public Product update(
             @PathVariable long id,
             @RequestBody Product product
@@ -47,6 +56,7 @@ public class ProductController {
 
     // DELETE - Eliminar producto
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar un producto", description = "Elimina un producto del almacen mediante su ID")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable long id) {
         productService.delete(id);

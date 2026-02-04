@@ -91,7 +91,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         // Publico
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(
+                                "/auth/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**")
+                        .permitAll()
 
                         // PRODUCTOS
                         .requestMatchers(HttpMethod.GET, "/product", "/product/**")
@@ -130,7 +135,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/report/**")
                         .hasAnyRole("ADMIN", "MANAGER", "AUDITOR")
 
-                        // TEST ROLES
+                        // PRUEBAS
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers("/operator/**").hasAnyRole("ADMIN", "OPERATOR")
@@ -138,7 +143,6 @@ public class SecurityConfig {
 
                         .anyRequest().authenticated())
 
-                // BASIC AUTH
                 .httpBasic(httpBasic -> {
                 });
 
