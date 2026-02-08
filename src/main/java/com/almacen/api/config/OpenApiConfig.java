@@ -13,12 +13,13 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(
-        security = @SecurityRequirement(name = "basicAuth")
+    security = @SecurityRequirement(name = "bearerAuth")
 )
 @SecurityScheme(
-        name = "basicAuth",
-        type = SecuritySchemeType.HTTP,
-        scheme = "basic"
+    name = "bearerAuth",
+    type = SecuritySchemeType.HTTP,
+    scheme = "bearer",
+    bearerFormat = "JWT"
 )
 public class OpenApiConfig {
 
@@ -28,7 +29,7 @@ public class OpenApiConfig {
             .info(new Info()
                 .title("API Sistema de Almacen")
                 .description("API REST para sistema de almacen")
-                .version("1.0.0")
+                .version("1.3.0")
                 .contact(new Contact()
                     .name("Darsiuz")
                     .email("dggm@almacen.com")

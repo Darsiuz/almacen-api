@@ -7,6 +7,7 @@ import com.almacen.api.mapper.SystemConfigMapper;
 import com.almacen.api.model.SystemConfig;
 import com.almacen.api.repository.SystemConfigRepository;
 
+
 @Service
 public class SystemConfigService {
 
@@ -37,9 +38,13 @@ public class SystemConfigService {
         return mapper.toDTO(getEntity());
     }
 
+    
     public SystemConfigDTO updateConfig(SystemConfigDTO dto) {
         SystemConfig entity = getEntity();
         mapper.updateEntity(entity, dto);
+        if (entity == null) {
+            throw new RuntimeException("No se pudo obtener la configuración del sistema.");
+        }
         repository.save(entity);
         return mapper.toDTO(entity);
     }

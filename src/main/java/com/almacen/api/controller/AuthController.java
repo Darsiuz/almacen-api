@@ -7,37 +7,41 @@ import com.almacen.api.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import com.almacen.api.security.jwt.JwtService;
 
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
+        private final AuthenticationManager authenticationManager;
+        private final UserRepository userRepository;
+        private final JwtService jwtService;
 
-    public AuthController(AuthenticationManager authenticationManager,
-                          UserRepository userRepository) {
-        this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
-    }
+        public AuthController(AuthenticationManager authenticationManager,
+                        UserRepository userRepository,
+                        JwtService jwtService) {
+                this.authenticationManager = authenticationManager;
+                this.userRepository = userRepository;
+                this.jwtService = jwtService;
+        }
 
-    @PostMapping("/login")
-    public LoginResponseDTO login(@RequestBody LoginRequestDTO request) {
+        @PostMapping("/login")
+        public LoginResponseDTO login(@RequestBody LoginRequestDTO request) {
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+                authenticationManager.authenticate(
+                                new UsernamePasswordAuthenticationToken(
+                                                request.getEmail(),
+                                                request.getPassword()));
 
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-
-        return new LoginResponseDTO(
-                user.getEmail(),
-                user.getRole().getName(),
-                user.getName()
-        );
-    }
+                User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+                String token = jwtService.generateToken(
+                                user.getEmail(),
+                                user.getRole().getName());
+                return new LoginResponseDTO(
+                                token,
+                                user.getEmail(),
+                                user.getRole().getName(),
+                                user.getName());
+        }
 }

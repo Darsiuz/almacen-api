@@ -14,6 +14,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.almacen.api.security.jwt.JwtAuthenticationFilter;
+import com.almacen.api.security.jwt.JwtService;
+
 import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
@@ -48,12 +52,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtService jwtService) throws Exception {
+
+        JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtService);
 
         http
                 .cors(cors -> {
                 })
                 .csrf(csrf -> csrf.disable())
+
+                .sessionManagement(sm -> sm.sessionCreationPolicy(
+                        org.springframework.security.config.http.SessionCreationPolicy.STATELESS))
 
                 // MANEJO DE ERRORES DE SEGURIDAD
                 .exceptionHandling(ex -> ex
@@ -89,7 +98,6 @@ public class SecurityConfig {
 
                 // AUTORIZACION
                 .authorizeHttpRequests(auth -> auth
-
                         // Publico
                         .requestMatchers(
                                 "/auth/**",
@@ -143,8 +151,8 @@ public class SecurityConfig {
 
                         .anyRequest().authenticated())
 
-                .httpBasic(httpBasic -> {
-                });
+                .addFilterBefore(jwtFilter,
+                        org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
