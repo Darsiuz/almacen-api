@@ -124,7 +124,7 @@ public class SecurityConfig {
                         .hasAnyRole("ADMIN", "OPERATOR")
 
                         .requestMatchers(HttpMethod.GET, "/movement/**")
-                        .hasAnyRole("ADMIN", "MANAGER", "AUDITOR")
+                        .hasAnyRole("ADMIN", "MANAGER","OPERATOR", "AUDITOR")
 
                         .requestMatchers(HttpMethod.PUT, "/movement/**")
                         .hasAnyRole("ADMIN", "MANAGER")
@@ -134,7 +134,7 @@ public class SecurityConfig {
                         .hasAnyRole("ADMIN", "OPERATOR")
 
                         .requestMatchers(HttpMethod.GET, "/incident/**")
-                        .hasAnyRole("ADMIN", "MANAGER", "AUDITOR")
+                        .hasAnyRole("ADMIN", "MANAGER","OPERATOR", "AUDITOR")
 
                         .requestMatchers(HttpMethod.PUT, "/incident/**")
                         .hasAnyRole("ADMIN", "MANAGER")
