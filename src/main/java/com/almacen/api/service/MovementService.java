@@ -107,6 +107,7 @@ public class MovementService {
     }
 
     // Rechazar movimiento
+    @Transactional
     public Movement reject(Long id, String email) {
         if (id == null)
             throw new IllegalArgumentException("El id del movimiento no puede ser null");

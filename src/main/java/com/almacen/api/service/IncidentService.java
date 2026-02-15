@@ -8,6 +8,7 @@ import com.almacen.api.repository.IncidentRepository;
 import com.almacen.api.repository.ProductRepository;
 import com.almacen.api.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,17 +19,33 @@ public class IncidentService {
     private final IncidentRepository incidentRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final SystemConfigService systemConfigService;
 
     public IncidentService(
             IncidentRepository incidentRepository,
             ProductRepository productRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            SystemConfigService systemConfigService) {
         this.incidentRepository = incidentRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.systemConfigService = systemConfigService;
+    }
+
+    private void applyStockAdjustment(Product product, String type, int quantity) {
+
+        if ("ENTRADA".equalsIgnoreCase(type)) {
+            product.setQuantity(product.getQuantity() + quantity);
+        } else {
+            if (product.getQuantity() < quantity) {
+                throw new RuntimeException("Stock insuficiente");
+            }
+            product.setQuantity(product.getQuantity() - quantity);
+        }
     }
 
     // Crear incidencia
+    @Transactional
     public Incident create(IncidentDTO dto, String email) {
         Long productId = dto.getProductId();
 
@@ -46,9 +63,20 @@ public class IncidentService {
         incident.setType(dto.getType());
         incident.setQuantity(dto.getQuantity());
         incident.setDescription(dto.getDescription());
-        incident.setStatus("PENDIENTE");
+        // incident.setStatus("PENDIENTE");
         incident.setReportedBy(reporter);
         incident.setReportedAt(LocalDateTime.now());
+
+        boolean requireApproval = systemConfigService.getEntity().isRequireIncidentApproval();
+
+        if (requireApproval) {
+            incident.setStatus("PENDIENTE");
+        } else {
+            incident.setStatus("RESUELTO");
+
+            // aplicar ajuste de stock automaticamente
+            applyStockAdjustment(product, dto.getType(), dto.getQuantity());
+        }
 
         return incidentRepository.save(incident);
     }
@@ -59,6 +87,7 @@ public class IncidentService {
     }
 
     // Resolver incidencia
+    @Transactional
     public Incident resolve(Long id, String email) {
 
         if (id == null)
@@ -67,21 +96,27 @@ public class IncidentService {
         Incident incident = incidentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Incidencia no encontrada"));
 
+        // VALIDAR ESTADO
+        if (!"PENDIENTE".equalsIgnoreCase(incident.getStatus())) {
+            throw new RuntimeException("La incidencia ya fue procesada");
+        }
+
         User manager = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        Product product = incident.getProduct();
+
+        applyStockAdjustment(product, incident.getType(), incident.getQuantity());
 
         incident.setStatus("RESUELTO");
         incident.setResolvedBy(manager);
         incident.setResolvedAt(LocalDateTime.now());
 
-        // Ajustar stock
-        Product product = incident.getProduct();
-        product.setQuantity(product.getQuantity() - incident.getQuantity());
-
         return incidentRepository.save(incident);
     }
 
     // Rechazar incidencia
+    @Transactional
     public Incident reject(Long id, String email) {
 
         if (id == null)
@@ -89,6 +124,10 @@ public class IncidentService {
 
         Incident incident = incidentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Incidencia no encontrada"));
+
+        if (!"PENDIENTE".equalsIgnoreCase(incident.getStatus())) {
+            throw new RuntimeException("La incidencia ya fue procesada");
+        }
 
         User manager = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
