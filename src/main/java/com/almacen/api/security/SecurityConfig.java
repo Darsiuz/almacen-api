@@ -124,7 +124,7 @@ public class SecurityConfig {
                         .hasAnyRole("ADMIN", "OPERATOR")
 
                         .requestMatchers(HttpMethod.GET, "/movement/**")
-                        .hasAnyRole("ADMIN", "MANAGER","OPERATOR", "AUDITOR")
+                        .hasAnyRole("ADMIN", "MANAGER", "OPERATOR", "AUDITOR")
 
                         .requestMatchers(HttpMethod.PUT, "/movement/**")
                         .hasAnyRole("ADMIN", "MANAGER")
@@ -134,7 +134,7 @@ public class SecurityConfig {
                         .hasAnyRole("ADMIN", "OPERATOR")
 
                         .requestMatchers(HttpMethod.GET, "/incident/**")
-                        .hasAnyRole("ADMIN", "MANAGER","OPERATOR", "AUDITOR")
+                        .hasAnyRole("ADMIN", "MANAGER", "OPERATOR", "AUDITOR")
 
                         .requestMatchers(HttpMethod.PUT, "/incident/**")
                         .hasAnyRole("ADMIN", "MANAGER")
@@ -143,8 +143,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/report/**")
                         .hasAnyRole("ADMIN", "MANAGER", "AUDITOR")
 
+                        // SYSTEM CONFIG
+                        .requestMatchers(HttpMethod.GET, "/admin/system")
+                        .hasAnyRole("ADMIN", "MANAGER", "OPERATOR", "AUDITOR")// TODOS PUEDEN VER LA CONFIG
+
+                        .requestMatchers(HttpMethod.PUT, "/admin/system")
+                        .hasRole("ADMIN") // SOLO ADMIN PUEDE MODIFICAR LA CONFIG
+
                         // PRUEBAS
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        // .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers("/operator/**").hasAnyRole("ADMIN", "OPERATOR")
                         .requestMatchers("/auditor/**").hasAnyRole("ADMIN", "AUDITOR")
