@@ -150,6 +150,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/admin/system")
                         .hasRole("ADMIN") // SOLO ADMIN PUEDE MODIFICAR LA CONFIG
 
+                        // USUARIOS
+                        .requestMatchers(HttpMethod.GET, "/admin/users/**")
+                        .hasAnyRole("ADMIN")
+
                         // PRUEBAS
                         // .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/manager/**").hasAnyRole("ADMIN", "MANAGER")
