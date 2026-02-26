@@ -1,8 +1,12 @@
 package com.almacen.api.exception;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -31,6 +35,25 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 new ApiError(404, "NO ENCONTRADO", ex.getMessage()),
                 HttpStatus.NOT_FOUND);
+    }
+
+    // 400 - Validación de datos
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiError> handleValidationErrors(
+            MethodArgumentNotValidException ex) {
+
+        Map<String, String> fieldErrors = new HashMap<>();
+
+        ex.getBindingResult().getFieldErrors()
+                .forEach(error -> fieldErrors.put(error.getField(), error.getDefaultMessage()));
+
+        return new ResponseEntity<>(
+                new ApiError(
+                        400,
+                        "BAD REQUEST",
+                        "Errores de validacion",
+                        fieldErrors),
+                HttpStatus.BAD_REQUEST);
     }
 
     // 500 - Internal Server Error

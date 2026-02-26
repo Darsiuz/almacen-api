@@ -16,4 +16,16 @@ public class ProductMapper {
                 product.getLocation()
         );
     }
+
+    public static Product toEntity(ProductDTO dto) {
+        return new Product(
+                dto.getId(),
+                dto.getName(),
+                dto.getCategory(),
+                dto.getQuantity(),
+                dto.getMinStock(),
+                dto.getPrice(),
+                dto.getLocation()
+        );
+    }
 }

@@ -1,10 +1,13 @@
 package com.almacen.api.service;
 
+import com.almacen.api.dto.ProductDTO;
+import com.almacen.api.mapper.ProductMapper;
 import com.almacen.api.model.Product;
 import com.almacen.api.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -16,36 +19,45 @@ public class ProductService {
     }
 
     // Listar todos
-    public List<Product> findAll() {
-        return productRepository.findAll();
+    public List<ProductDTO> findAll() {
+        return productRepository.findAll()
+                .stream()
+                .map(ProductMapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     // Obtener por ID
-    public Product findById(long id) {
-        return productRepository.findById(id)
+    public ProductDTO findById(long id) {
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        return ProductMapper.toDTO(product);
     }
 
     // Crear
-    public Product create(Product product) {
+    public ProductDTO create(ProductDTO dto) {
+        Product product = ProductMapper.toEntity(dto);
         if (product == null) {
-            throw new IllegalArgumentException("El producto no puede ser nulo");
+            throw new RuntimeException("Producto no puede ser nulo");
         }
-        return productRepository.save(product);
+        Product saved = productRepository.save(product);
+        return ProductMapper.toDTO(saved);
     }
 
     // Actualizar
-    public Product update(long id, Product updated) {
-        Product product = findById(id);
+    public ProductDTO update(long id, ProductDTO dto) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-        product.setName(updated.getName());
-        product.setCategory(updated.getCategory());
-        product.setQuantity(updated.getQuantity());
-        product.setMinStock(updated.getMinStock());
-        product.setPrice(updated.getPrice());
-        product.setLocation(updated.getLocation());
+        product.setName(dto.getName());
+        product.setCategory(dto.getCategory());
+        product.setQuantity(dto.getQuantity());
+        product.setMinStock(dto.getMinStock());
+        product.setPrice(dto.getPrice());
+        product.setLocation(dto.getLocation());
 
-        return productRepository.save(product);
+        Product updated = productRepository.save(product);
+        return ProductMapper.toDTO(updated);
     }
 
     // Eliminar
@@ -55,6 +67,4 @@ public class ProductService {
         }
         productRepository.deleteById(id);
     }
-
-    
 }
