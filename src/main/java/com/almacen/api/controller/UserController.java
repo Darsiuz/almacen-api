@@ -89,11 +89,16 @@ public class UserController {
         userService.deleteUser(id);
     }
 
-    // PATCH - Desactivar usuario
-    @Operation(summary = "Desactivar usuario", description = "Desactiva un usuario sin eliminarlo del sistema mediante su ID")
-    @PatchMapping("/{id}/disable")
+    // PATCH - Activar/Desactivar usuario
+    @Operation(summary = "Activar/Desactivar usuario", description = "Activa o desactiva un usuario mediante su ID")
+    @PatchMapping("/{id}/toggle")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void disableUser(@PathVariable long id) {
-        userService.disableUser(id);
+    public void toggleUser(@PathVariable long id) {
+        User user = userService.getUserById(id);
+        if (user.isActive()) {
+            userService.disableUser(id);
+        } else {
+            userService.enableUser(id);
+        }
     }
 }

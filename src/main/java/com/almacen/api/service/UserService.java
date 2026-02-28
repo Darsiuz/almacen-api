@@ -80,8 +80,14 @@ public class UserService {
     public void disableUser(long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
         user.setActive(false);
+        userRepository.save(user);
+    }
+
+    public void enableUser(long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        user.setActive(true);
         userRepository.save(user);
     }
 }
