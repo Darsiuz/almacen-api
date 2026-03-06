@@ -50,7 +50,7 @@ public class ProductController {
     @Operation(summary = "Actualizar un producto existente", description = "Actualiza los datos de un producto existente mediante su ID")
     public ProductDTO update(
             @PathVariable long id,
-            @RequestBody ProductDTO product
+            @Valid @RequestBody ProductDTO product
     ) {
         return productService.update(id, product);
     }
